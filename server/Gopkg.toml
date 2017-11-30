@@ -1,0 +1,11 @@
+
+[[constraint]]
+  branch = "ripfield"
+  name = "github.com/redsift/bleve"
+
+[[constraint]]
+  branch = "patched"
+  name = "github.com/redsift/blevex"
+[[constraint]]
+  branch = "master"
+  name = "github.com/jpillora/backoff"
