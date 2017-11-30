@@ -27,7 +27,7 @@
           }
         },
         "outputs": {
-          "forensics-st":{ "discardValue": true}
+          "forensics-st":{}
         }
       },
       {
@@ -38,7 +38,7 @@
         },
         "implementation": {
           "go": "server/gow/emailload/load.go",
-          "sandbox": "quay.io/redsift/sandbox-go-dmarc-insights:v1.1",
+          "sandbox": "quay.io/redsift/sandbox-go-dmarc-insights:vcrontest",
           "qos": {
             "large-storage": [
               "rocksdb_store_forensics:rw"
