@@ -15,7 +15,7 @@
 module.exports = function (got) {
 
   var res = [];
-  for (var i = 0; i < 100; i++) {
+  for (var i = 0; i < 5; i++) {
     res.push({
       name: 'forensics-st',
       key: 'redsift.com/'+i,

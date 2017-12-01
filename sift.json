@@ -12,19 +12,21 @@
   },
   "dag": {
     "inputs": {
-      "emails": {},
-      "slack-bot": {},
-      "webhooks": {},
-      "rpc": {}
+      "rpc": {
+        "trigger":{
+          "methods":["GET"],
+          "path":"/trigger"
+        }
+      }
     },
     "nodes": [
       {
-        "#": "First Node",
+        "#": "Emit Node",
+        "input": {
+          "bucket": "trigger-st"
+        },
         "implementation": {
-          "javascript": "server/node1.js",
-          "when": {
-            "interval": 60
-          }
+          "javascript": "server/node1.js"
         },
         "outputs": {
           "forensics-st":{}
@@ -45,13 +47,47 @@
             ]
           }
         }
+      },
+      {
+        "#": "RPC trigger",
+        "input":{
+          "bucket": "trigger"
+        },
+        "implementation": {
+          "javascript": "rpc.js"
+        },
+        "outputs":{
+          "trigger-st": {},
+          "api_rpc": {}
+        }
+      },
+      {
+        "#": "Cron trigger",
+        "implementation":{
+          "javascript": "cron.js",
+          "when":{
+            "interval": 180
+          }
+        },
+        "outputs":{
+          "trigger-st": {}
+        }
       }
     ],
     "stores": {
       "forensics-st": {
         "key$schema": "string/string"
+      },
+      "trigger-st": {
+        "key$schema": "string"
       }
     },
-    "outputs": {}
+    "outputs": {
+      "exports":{
+        "api_rpc":{
+          "import":"_rpc"
+        }
+      }
+    }
   }
 }
