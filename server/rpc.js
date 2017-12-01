@@ -6,6 +6,7 @@ module.exports = function (got) {
   console.log("rpc triggered!")
   for (var d of inData.data) {
     res.push({
+      name: 'api_rpc',
       key: d.key,
       value: {
         status_code: 200,
@@ -14,7 +15,8 @@ module.exports = function (got) {
     })
   }
   res.push({
-    key: 'trigger-st',
+    name: 'trigger-st',
+    key: 'rpc-trigger',
     value: { 'who': 'rpc'}
   })
 
