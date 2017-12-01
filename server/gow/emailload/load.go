@@ -37,6 +37,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 		}
 
 		headers := entry["headers"].(map[string]interface{})
+		headers["authentication-results"] = nil
 		ar := utils.ParseAuthenticationResults(headers["authentication-results"].(string))
 		for k, v := range ar {
 			entryToIndex[k] = v
