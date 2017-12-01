@@ -54,7 +54,7 @@
           "bucket": "trigger"
         },
         "implementation": {
-          "javascript": "rpc.js"
+          "javascript": "server/rpc.js"
         },
         "outputs":{
           "trigger-st": {},
@@ -64,7 +64,7 @@
       {
         "#": "Cron trigger",
         "implementation":{
-          "javascript": "cron.js",
+          "javascript": "server/cron.js",
           "when":{
             "interval": 180
           }
