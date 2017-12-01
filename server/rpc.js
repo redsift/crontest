@@ -3,7 +3,7 @@
 module.exports = function (got) {
   const inData = got.in;
   var res = [];
-
+  console.log("rpc triggered!")
   for (var d of inData.data) {
     res.push({
       key: d.key,

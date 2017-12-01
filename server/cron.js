@@ -13,7 +13,7 @@
 // for more info have a look at:
 // http://docs.redsift.com/docs/server-code-implementation
 module.exports = function (got) {
-  cosnole.log("cron triggered!")
+  console.log("cron triggered!")
   return [{
       name: 'trigger-st',
       key: 'cron-trigger',
