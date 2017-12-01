@@ -10,7 +10,7 @@ module.exports = function (got) {
       key: d.key,
       value: {
         status_code: 200,
-        body: 'ok'
+        body: Buffer.from("ok").toString('base64')
       }
     })
   }
