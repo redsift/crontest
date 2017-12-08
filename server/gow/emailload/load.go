@@ -19,11 +19,19 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 	if err != nil {
 		return nil, fmt.Errorf("error creating index: %s", err.Error())
 	}
+	if idx == nil {
+		return nil, fmt.Errorf("error creating index, retries failed")
+	}
+
 	defer idx.Close()
 
 	batch := 1000
 	var datums []utils.Datum
 	for _, v := range inData {
+		if v.Data.Value == nil {
+			continue
+		}
+
 		var entry map[string]interface{}
 		err = json.Unmarshal(v.Data.Value, &entry)
 		if err != nil {
@@ -36,11 +44,15 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 			"date":    entry["date"],
 		}
 
-		headers := entry["headers"].(map[string]interface{})
-		headers["authentication-results"] = nil
-		ar := utils.ParseAuthenticationResults(headers["authentication-results"].(string))
-		for k, v := range ar {
-			entryToIndex[k] = v
+		headers, ok := entry["headers"].(map[string]interface{})
+		if ok {
+			authenticationResults, ok := headers["authentication-results"].(string)
+			if ok {
+				ar := utils.ParseAuthenticationResults(authenticationResults)
+				for k, v := range ar {
+					entryToIndex[k] = v
+				}
+			}
 		}
 
 		datums = append(datums, utils.Datum{
@@ -51,7 +63,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 
 	err = utils.UpdateIndex(idx, batch, datums)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error updating index: %s", err.Error())
 	}
 
 	return nil, nil
