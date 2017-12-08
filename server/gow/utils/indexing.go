@@ -71,8 +71,9 @@ func OpenIndex(name string, forSearch bool) (bleve.Index, error) {
 				if err != nil {
 					return nil, err
 				}
+			} else {
+				return nil, err
 			}
-			return nil, err
 		}
 	}
 
@@ -216,12 +217,8 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 	isDebug := ll == "debug"
 	start := time.Now()
 
-	var batch *bleve.Batch
-
+	batch := idx.NewBatch()
 	for i, s := range lines {
-		if batch == nil {
-			batch = idx.NewBatch()
-		}
 		if err := batch.Index(strings.TrimSpace(s.Id), s.Data); err != nil {
 			return err
 		}
@@ -230,7 +227,7 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 			if err := idx.Batch(batch); err != nil {
 				return err
 			}
-			batch = nil
+			batch.Reset()
 		}
 
 		if isDebug {
@@ -240,12 +237,10 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 		}
 	}
 
-	if batch != nil {
-		if err := idx.Batch(batch); err != nil {
-			return err
-		}
-		batch = nil
+	if err := idx.Batch(batch); err != nil {
+		return err
 	}
+	batch.Reset()
 
 	fmt.Printf("Indexed %d lines in %0.3fs\n", len(lines), time.Now().Sub(start).Seconds())
 	return nil
