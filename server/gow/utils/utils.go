@@ -46,27 +46,32 @@ func ErrorResponse(brand string, key string, title string, err error) sandboxrpc
 
 func ParseAuthenticationResults(ar string) map[string]string {
 	regexs := map[string]*regexp.Regexp{
-		"spf":        regexp.MustCompile(`spf=(.*)`),
-		"dkim":       regexp.MustCompile(`dkim=(.*)`),
-		"dkimDomain": regexp.MustCompile(`header\.d=(.*)`),
-		"senderIP":   regexp.MustCompile(`([\d\.]+\.\d{1,3})|([[:xdigit:]]*:+[:[:xdigit:]]+)`),
+		"authservId": regexp.MustCompile(`^(([a-zA-Z0-9]+\.)+[a-zA-Z0-9]+)`),
+		"spf":        regexp.MustCompile(`(?U)spf=(.*)(\s+|$)`),
+		"dkim":       regexp.MustCompile(`(?U)dkim=(.*)(\s+|$)`),
+		"dkimDomain": regexp.MustCompile(`(?U)header\.d=(.*)(\s+|$)`),
+		"senderIP":   regexp.MustCompile(`sender IP is ([a-fA-F0-9.:]+)\)?`),
 	}
+
+	res := map[string]string{}
 	parts := strings.Split(ar, ";")
-	res := map[string]string{
-		"authservId": parts[0],
+	if len(parts) == 0 {
+		return res
 	}
 
 	for _, p := range parts {
 		for k, re := range regexs {
-			t := strings.TrimSpace(re.FindString(p))
-			if len(t) > 0 {
-				res[k] = t
+			if v, ok := res[k]; ok && len(v) > 0 {
+				continue
+			}
+			t := re.FindStringSubmatch(p)
+			if len(t) > 1 && len(t[1]) > 0 {
+				if k == "senderIP" && net.ParseIP(t[1]) == nil {
+					continue
+				}
+				res[k] = t[1]
 			}
 		}
-	}
-
-	if net.ParseIP(res["senderIP"]) == nil {
-		delete(res, "senderIP")
 	}
 
 	return res
