@@ -21,6 +21,31 @@
     },
     "nodes": [
       {
+        "#": "RPC trigger",
+        "input":{
+          "bucket": "trigger"
+        },
+        "implementation": {
+          "javascript": "server/rpc.js"
+        },
+        "outputs":{
+          "trigger-st": {},
+          "api_rpc": {}
+        }
+      },
+      {
+        "#": "Cron trigger",
+        "implementation":{
+          "javascript": "server/cron.js",
+          "when":{
+            "interval": 180
+          }
+        },
+        "outputs":{
+          "trigger-st": {}
+        }
+      },
+      {
         "#": "Emit Node",
         "input": {
           "bucket": "trigger-st"
@@ -46,31 +71,6 @@
               "rocksdb_store_forensics:rw"
             ]
           }
-        }
-      },
-      {
-        "#": "RPC trigger",
-        "input":{
-          "bucket": "trigger"
-        },
-        "implementation": {
-          "javascript": "server/rpc.js"
-        },
-        "outputs":{
-          "trigger-st": {},
-          "api_rpc": {}
-        }
-      },
-      {
-        "#": "Cron trigger",
-        "implementation":{
-          "javascript": "server/cron.js",
-          "when":{
-            "interval": 180
-          }
-        },
-        "outputs":{
-          "trigger-st": {}
         }
       }
     ],
