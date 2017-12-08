@@ -13,35 +13,37 @@
   "dag": {
     "inputs": {
       "rpc": {
-        "trigger":{
-          "methods":["GET"],
-          "path":"/trigger"
+        "trigger": {
+          "methods": [
+            "GET"
+          ],
+          "path": "/trigger"
         }
       }
     },
     "nodes": [
       {
         "#": "RPC trigger",
-        "input":{
+        "input": {
           "bucket": "trigger"
         },
         "implementation": {
           "javascript": "server/rpc.js"
         },
-        "outputs":{
+        "outputs": {
           "trigger-st": {},
           "api_rpc": {}
         }
       },
       {
         "#": "Cron trigger",
-        "implementation":{
+        "implementation": {
           "javascript": "server/cron.js",
-          "when":{
+          "when": {
             "interval": 180
           }
         },
-        "outputs":{
+        "outputs": {
           "trigger-st": {}
         }
       },
@@ -54,7 +56,7 @@
           "javascript": "server/node1.js"
         },
         "outputs": {
-          "forensics-st":{}
+          "forensics-st": {}
         }
       },
       {
@@ -83,9 +85,9 @@
       }
     },
     "outputs": {
-      "exports":{
-        "api_rpc":{
-          "import":"_rpc"
+      "exports": {
+        "api_rpc": {
+          "import": "_rpc"
         }
       }
     }
