@@ -100,9 +100,9 @@
       {
         "#": "Update Forensics Index",
         "input": {
-          "bucket": "dump-st",
+          "bucket": "forensics-st",
           "select": "*/*",
-          "batchSize":500
+          "batchSize":1000
         },
         "implementation": {
           "go": "server/gow/emailload/load.go",
@@ -118,9 +118,6 @@
     "stores": {
       "session": {
         "import": "_session"
-      },
-      "dump-st":{
-         "key$schema": "string/string"
       },
       "forensics-st": {
         "key$schema": "string/string"
