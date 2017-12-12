@@ -23,7 +23,7 @@ module.exports = function (got) {
       key: `redsift.com/${id}-${i}`,
       value: {
         "date":"2017-11-01T00:52:47.000Z","timestamp":1509497567,"from":"Google Platform <carrkees@redsift.com>","subject":"Your Apple ID was used to sign in to FaceTime on an iPhone 7",
-        "forensicId":"PDEyMzQ1NjczMnAtbGcHBsZS5jb20-" + i, "headers":{"authentication-results":"hotmail.com; spf=softfail (sender IP is 192.168.0.64; identity alignment result is pass and alignment mode is relaxed) smtp.mailfrom=carrkees@redsift.com; dkim=none (identity alignment result is pass and alignment mode is relaxed) header.d=redsift.com; x-hmca=fail header.id=carrkees@redsift.com"}
+        "forensicId":"PDEyMzQ1NjczMnAtbGcHBsZS5jb20-" + i, "headers":{"authentication-results":"hotmail.com; spf=softfail (sender IP is 192.168.0.64; identity alignment result); dkim=none header.d=redsift.com"}
       }
     });
   }
