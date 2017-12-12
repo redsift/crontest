@@ -1,7 +1,6 @@
 package counter
 
 import (
-  "encoding/json"
   "fmt"
   "server/gow/utils"
 
@@ -20,11 +19,11 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
     return nil, err
   }
 
-  txt := fmt.Srintf("The DB contains %d documents", count)
+  txt := fmt.Sprintf("The DB contains %d documents", count)
   fmt.Println(txt)
 
   getData := req.Get
   reqID := string(getData[0].Data[0].Value[:])
 
-  return utils.NewRPCComputeResponse(reqID, 200, []byte(txt), false), nil
+  return []sandboxrpc.ComputeResponse{utils.NewRPCComputeResponse(reqID, 200, []byte(txt), false)}, nil
 }
