@@ -18,6 +18,12 @@
             "GET"
           ],
           "path": "/trigger"
+        },
+        "count": {
+          "methods": [
+            "GET"
+          ],
+          "path": "/count"
         }
       }
     },
@@ -53,6 +59,29 @@
         },
         "outputs": {
           "trigger-st": {},
+          "api_rpc": {}
+        }
+      },
+      {
+        "#": "Count docs",
+        "input": {
+          "bucket": "count",
+          "get": [
+            {
+              "bucket": "session",
+              "key": "rpc/uuid"
+            }]
+        },
+        "implementation": {
+          "go": "server/gow/counter/counter.go",
+          "sandbox": "quay.io/redsift/sandbox-go-rocksdb:v5.8",
+          "qos": {
+            "large-storage": [
+              "rocksdb_store_forensics:rw"
+            ]
+          }
+        },
+        "outputs": {
           "api_rpc": {}
         }
       },
