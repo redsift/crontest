@@ -231,9 +231,9 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 		}
 
 		if isDebug {
-			if i%100 == 0 {
-				fmt.Println("Indexed...", i)
-			}
+			// if i%100 == 0 {
+			// 	fmt.Println("Indexed...", i)
+			// }
 		}
 	}
 

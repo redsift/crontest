@@ -23,6 +23,27 @@
     },
     "nodes": [
       {
+        "#": "Migration Reindex Forensics",
+        "input":{
+          "bucket": "forensics-st",
+          "select": "*/*"
+        },
+        "implementation": {
+          "when": {
+            "run": {
+              "update": true,
+              "install": false
+            }
+          },
+          "qos": {
+            "long":true
+          }
+        },
+        "outputs":{
+          "forensics-st":{ "discardValue": true}
+        }
+      },
+      {
         "#": "RPC trigger",
         "input": {
           "bucket": "trigger"
@@ -33,18 +54,6 @@
         "outputs": {
           "trigger-st": {},
           "api_rpc": {}
-        }
-      },
-      {
-        "#": "Cron trigger",
-        "implementation": {
-          "javascript": "server/cron.js",
-          "when": {
-            "interval": 180
-          }
-        },
-        "outputs": {
-          "trigger-st": {}
         }
       },
       {
@@ -62,8 +71,9 @@
       {
         "#": "Update Forensics Index",
         "input": {
-          "bucket": "forensics-st",
-          "select": "/"
+          "bucket": "dump-st",
+          "select": "*/*",
+          "batchSize":500
         },
         "implementation": {
           "go": "server/gow/emailload/load.go",
@@ -77,6 +87,9 @@
       }
     ],
     "stores": {
+      "dump-st":{
+         "key$schema": "string/string"
+      },
       "forensics-st": {
         "key$schema": "string/string"
       },
