@@ -24,6 +24,12 @@
             "GET"
           ],
           "path": "/count"
+        },
+        "countstore": {
+          "methods": [
+            "GET"
+          ],
+          "path": "/countstore"
         }
       }
     },
@@ -113,6 +119,36 @@
             ]
           }
         }
+      },
+      {
+        "#": "Store counter emit */*",
+        "input": {
+          "bucket": "countstore"
+        },
+        "implementation": {
+          "javascript": "server/staremiter.js"
+        },
+        "outputs": {
+          "forensics-counter-st": {"discardValue": true}
+        }
+      },
+       {
+        "#": "Respond to countsize",
+        "input": {
+          "bucket": "forensics-counter-st",
+          "get": [
+            {
+              "bucket": "session",
+              "key": "rpc/uuid"
+            }
+          ]
+        },
+        "implementation": {
+          "javascript": "server/count_response.js"
+        },
+        "outputs": {
+          "forensics-counter-st": {}
+        }
       }
     ],
     "stores": {
@@ -120,7 +156,8 @@
         "import": "_session"
       },
       "forensics-st": {
-        "key$schema": "string/string"
+        "key$schema": "string/string",
+        "alias":["forensics-counter-st"]
       },
       "trigger-st": {
         "key$schema": "string"
