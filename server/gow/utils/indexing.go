@@ -218,7 +218,7 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 	start := time.Now()
 
 	batch := idx.NewBatch()
-	for i, s := range lines {
+	for _, s := range lines {
 		if err := batch.Index(strings.TrimSpace(s.Id), s.Data); err != nil {
 			return err
 		}
