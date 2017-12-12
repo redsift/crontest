@@ -15,7 +15,7 @@
 var crypto = require("crypto");
 module.exports = function (got) {
   var id = crypto.randomBytes(15).toString('hex');
-  var numForensics = process.env.NUM_OF_STUBS || 100
+  var numForensics = parseInt(process.env.NUM_OF_STUBS) || 100
   var res = [];
   for (var i = 0; i < numForensics; i++) {
     res.push({
@@ -42,5 +42,6 @@ module.exports = function (got) {
         "message-id":"<1234567333989.79297938859175595418.JavaMail.roverp@nwk-roverp-lap12.corp.apple.com>","mime-version":"1.0","x-emailtype-id":"784633","x-sent-to":"babygirl_636@hotmail.com","x-business-group":"iCloud","content-type":{"value":"text/html","params":{"charset":"UTF-8"}},"content-transfer-encoding":"7BIT","return-path":"carrkees@redsift.com","x-originalarrivaltime":"1 Nov 2017 07:52:47.0641 (UTC) FILETIME=[CE738090:01D29BCE]"}}
     });
   }
+  console.log("done with generating data")
   return res
 };
