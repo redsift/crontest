@@ -116,6 +116,9 @@
       }
     ],
     "stores": {
+      "session": {
+        "import": "_session"
+      },
       "dump-st":{
          "key$schema": "string/string"
       },
