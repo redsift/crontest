@@ -149,7 +149,7 @@
           "javascript": "server/count_response.js"
         },
         "outputs": {
-          "forensics-counter-st": {}
+          "api_rpc": {}
         }
       }
     ],
