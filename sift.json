@@ -106,7 +106,7 @@
       {
         "#": "Update Forensics Index",
         "input": {
-          "bucket": "forensics-st",
+          "bucket": "dump-st",
           "select": "*/*",
           "batchSize":1000
         },
@@ -154,6 +154,9 @@
     "stores": {
       "session": {
         "import": "_session"
+      },
+      "dump-st":{
+         "key$schema": "string/string"
       },
       "forensics-st": {
         "key$schema": "string/string",
