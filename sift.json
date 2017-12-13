@@ -136,6 +136,8 @@
         "#": "Respond to countsize",
         "input": {
           "bucket": "forensics-counter-st",
+          "select": "~/~",
+          "computeOnEmptySelect": true,
           "get": [
             {
               "bucket": "session",
