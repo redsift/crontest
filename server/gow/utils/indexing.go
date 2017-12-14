@@ -212,7 +212,7 @@ func createIndex(name, indexPath string) (bleve.Index, error) {
 	return idx, nil
 }
 
-func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
+func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum, manualCompaction bool) error {
 	ll := os.Getenv("LOGLEVEL")
 	isDebug := ll == "debug"
 	start := time.Now()
@@ -229,18 +229,23 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 			}
 			batch.Reset()
 		}
-
-		if isDebug {
-			// if i%100 == 0 {
-			// 	fmt.Println("Indexed...", i)
-			// }
-		}
 	}
 
 	if err := idx.Batch(batch); err != nil {
 		return err
 	}
 	batch.Reset()
+
+	if manualCompaction {
+		_, kv, err := idx.Advanced()
+		if err != nil {
+			return err
+		}
+		if kvstore, ok := kv.(*rocksdb.Store); ok {
+			fmt.Printf("Compacting....\n")
+			kvstore.Compact()
+		}
+	}
 
 	fmt.Printf("Indexed %d lines in %0.3fs\n", len(lines), time.Now().Sub(start).Seconds())
 	return nil

@@ -25,7 +25,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 
 	defer idx.Close()
 
-	batch := 100
+	batch := 1000
 	var datums []utils.Datum
 	for _, v := range inData {
 		if v.Data.Value == nil {
@@ -61,7 +61,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 		})
 	}
 
-	err = utils.UpdateIndex(idx, batch, datums)
+	err = utils.UpdateIndex(idx, batch, datums, true)
 	if err != nil {
 		return nil, fmt.Errorf("error updating index: %s", err.Error())
 	}
