@@ -61,7 +61,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 	}
 
 	// manualCompaction := len(datums) == 500
-	err = utils.UpdateIndex(idx, 200, datums, false)
+	err = utils.UpdateIndex(idx, len(datums), datums, true)
 	if err != nil {
 		return nil, fmt.Errorf("error updating index: %s", err.Error())
 	}
