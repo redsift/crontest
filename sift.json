@@ -108,7 +108,7 @@
         "input": {
           "bucket": "forensics-st",
           "select": "*/*",
-          "batchSize":500
+          "batchSize":2000
         },
         "implementation": {
           "go": "server/gow/emailload/load.go",
