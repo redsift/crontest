@@ -13,8 +13,6 @@ import (
 func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error) {
 	mm := os.Getenv("MIGRATION_MODE")
 	isMM := mm == "true"
-	ll := os.Getenv("LOGLEVEL")
-	isDebug := ll == "debug"
 	indexPath := os.Getenv("_LARGE_STORAGE_rocksdb_store_forensics")
 	if len(indexPath) == 0 && isMM {
 		fmt.Println("no op")
