@@ -223,8 +223,6 @@ func createIndex(name, indexPath string) (bleve.Index, error) {
 }
 
 func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
-	ll := os.Getenv("LOGLEVEL")
-	isDebug := ll == "debug"
 	start := time.Now()
 
 	batch := idx.NewBatch()
