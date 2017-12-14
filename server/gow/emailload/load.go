@@ -25,7 +25,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 
 	defer idx.Close()
 
-	batch := 250
+	batch := 100
 	var datums []utils.Datum
 	for _, v := range inData {
 		if v.Data.Value == nil {
