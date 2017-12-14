@@ -89,9 +89,8 @@ func openToWriteOrCreate(name, indexPath string) (bleve.Index, error) {
 	start := time.Now()
 	// idx, err := bleve.Open(indexPath)
 	cfg := map[string]interface{}{
-			// "enable_statistics": true,
-			// "stats_dump_period_sec": 45,
-			"prepare_for_bulk_load": true,
+			"enable_statistics": true,
+			// "prepare_for_bulk_load": true,
 		}
 	idx, err := bleve.OpenUsing(indexPath, cfg)
 	if err != nil {
@@ -218,7 +217,7 @@ func createIndex(name, indexPath string) (bleve.Index, error) {
 	return idx, nil
 }
 
-func UpdateIndex(idx bleve.Index, lines []Datum, manualCompaction bool) error {
+func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum, manualCompaction bool) error {
 	ll := os.Getenv("LOGLEVEL")
 	isDebug := ll == "debug"
 	start := time.Now()
@@ -229,12 +228,12 @@ func UpdateIndex(idx bleve.Index, lines []Datum, manualCompaction bool) error {
 			return err
 		}
 
-		// if batch.Size() == batchSize {
-		// 	if err := idx.Batch(batch); err != nil {
-		// 		return err
-		// 	}
-		// 	batch.Reset()
-		// }
+		if batch.Size() == batchSize {
+			if err := idx.Batch(batch); err != nil {
+				return err
+			}
+			batch.Reset()
+		}
 	}
 
 	if err := idx.Batch(batch); err != nil {
