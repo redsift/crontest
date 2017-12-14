@@ -242,7 +242,9 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum, manualCompaction
 			return err
 		}
 		if kvstore, ok := kv.(*rocksdb.Store); ok {
-			fmt.Printf("Compacting....\n")
+			if isDebug {
+				fmt.Printf("Compacting....\n")
+			}
 			kvstore.Compact()
 		}
 	}
