@@ -83,19 +83,20 @@ func OpenIndex(name string, forSearch bool) (bleve.Index, error) {
 func openToWriteOrCreate(name, indexPath string) (bleve.Index, error) {
 	ll := os.Getenv("LOGLEVEL")
 	isDebug := ll == "debug"
+	mm := os.Getenv("MIGRATION_MODE")
+	isMM := mm == "true"
 	if isDebug {
 		fmt.Println("openToWriteOrCreate...")
 	}
 	start := time.Now()
 	// idx, err := bleve.Open(indexPath)
 	cfg := map[string]interface{}{
-			// "enable_statistics": true,
-			"keep_log_file_num": 100,
-			"log_file_time_to_roll": 300,
-			// "prepare_for_bulk_load": true,
-			"writeoptions_disable_WAL": true,
-			// "disable_auto_compactions": true,
-		}
+		"keep_log_file_num": 100,
+		"log_file_time_to_roll": 300,
+	}
+	if isMM{
+		cfg["prepare_for_bulk_load"] = true
+	}
 	idx, err := bleve.OpenUsing(indexPath, cfg)
 	if err != nil {
 		if err != bleve.ErrorIndexMetaMissing {
@@ -221,7 +222,7 @@ func createIndex(name, indexPath string) (bleve.Index, error) {
 	return idx, nil
 }
 
-func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum, manualCompaction bool) error {
+func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 	ll := os.Getenv("LOGLEVEL")
 	isDebug := ll == "debug"
 	start := time.Now()
@@ -244,19 +245,6 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum, manualCompaction
 		return err
 	}
 	batch.Reset()
-
-	if manualCompaction {
-		_, kv, err := idx.Advanced()
-		if err != nil {
-			return err
-		}
-		if kvstore, ok := kv.(*rocksdb.Store); ok {
-			if isDebug {
-				fmt.Printf("Compacting....\n")
-			}
-			kvstore.Compact()
-		}
-	}
 
 	fmt.Printf("Indexed %d lines in %0.3fs\n", len(lines), time.Now().Sub(start).Seconds())
 	return nil
