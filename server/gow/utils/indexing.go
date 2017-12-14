@@ -90,6 +90,7 @@ func openToWriteOrCreate(name, indexPath string) (bleve.Index, error) {
 	// idx, err := bleve.Open(indexPath)
 	cfg := map[string]interface{}{
 			"enable_statistics": true,
+			"keep_log_file_num": 100,
 			// "prepare_for_bulk_load": true,
 		}
 	idx, err := bleve.OpenUsing(indexPath, cfg)
