@@ -37,7 +37,7 @@
       {
         "#": "Migration Reindex Forensics",
         "input":{
-          "bucket": "forensics-st",
+          "bucket": "dump-st",
           "select": "*/*"
         },
         "implementation": {
@@ -151,6 +151,9 @@
       }
     ],
     "stores": {
+      "dump-st":{
+        "key$schema": "string/string"
+      },
       "session": {
         "import": "_session"
       },
