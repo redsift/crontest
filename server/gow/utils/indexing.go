@@ -247,3 +247,19 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 	fmt.Printf("Indexed %d lines in %0.3fs\n", len(lines), time.Now().Sub(start).Seconds())
 	return nil
 }
+
+func Compact(idx bleve.Index) error {
+	ll := os.Getenv("LOGLEVEL")
+	isDebug := ll == "debug"
+	_, kv, err := idx.Advanced()
+	if err != nil {
+		return err
+	}
+	if kvstore, ok := kv.(*rocksdb.Store); ok {
+		if isDebug {
+			fmt.Printf("Compacting....\n")
+		}
+		kvstore.Compact()
+	}
+	return nil
+}

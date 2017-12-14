@@ -3,6 +3,7 @@ package emailload
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"server/gow/utils"
 
 	"github.com/redsift/go-sandbox-rpc"
@@ -75,15 +76,9 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 	}
 
 	if isMM {
-		_, kv, err := idx.Advanced()
-		if err != nil {
+		err = utils.Compact(idx)
+		if err != nil{
 			return nil, fmt.Errorf("error in advanced: %s", err.Error())
-		}
-		if kvstore, ok := kv.(*rocksdb.Store); ok {
-			if isDebug {
-				fmt.Printf("Compacting....\n")
-			}
-			kvstore.Compact()
 		}
 	}
 
