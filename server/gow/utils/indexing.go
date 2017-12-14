@@ -87,7 +87,13 @@ func openToWriteOrCreate(name, indexPath string) (bleve.Index, error) {
 		fmt.Println("openToWriteOrCreate...")
 	}
 	start := time.Now()
-	idx, err := bleve.Open(indexPath)
+	// idx, err := bleve.Open(indexPath)
+	cfg := map[string]interface{}{
+			// "enable_statistics": true,
+			// "stats_dump_period_sec": 45,
+			"prepare_for_bulk_load": true,
+		}
+	idx, err := bleve.OpenUsing(indexPath, cfg)
 	if err != nil {
 		if err != bleve.ErrorIndexMetaMissing {
 			return nil, err
@@ -234,7 +240,7 @@ func UpdateIndex(idx bleve.Index, lines []Datum, manualCompaction bool) error {
 	if err := idx.Batch(batch); err != nil {
 		return err
 	}
-	batch.Reset()
+	batch.Close()
 
 	if manualCompaction {
 		_, kv, err := idx.Advanced()
