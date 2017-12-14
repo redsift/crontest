@@ -3,6 +3,7 @@ package emailload
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 	"server/gow/utils"
 
 	"github.com/redsift/go-sandbox-rpc"
@@ -15,7 +16,9 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 		return nil, fmt.Errorf("empty input")
 	}
 
+	start := time.Now()
 	idx, err := utils.OpenIndex("forensics", false)
+	timeToOpenIndex := time.Now().Sub(start)
 	if err != nil {
 		return nil, fmt.Errorf("error creating index: %s", err.Error())
 	}
@@ -61,7 +64,11 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 	}
 
 	// manualCompaction := len(datums) == 500
-	err = utils.UpdateIndex(idx, 250, datums, true)
+	manualCompaction := true
+	if timeToOpenIndex > 5 * time.Second {
+		manualCompaction = false
+	}
+	err = utils.UpdateIndex(idx, 250, datums, manualCompaction)
 	if err != nil {
 		return nil, fmt.Errorf("error updating index: %s", err.Error())
 	}
