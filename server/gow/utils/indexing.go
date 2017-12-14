@@ -240,7 +240,7 @@ func UpdateIndex(idx bleve.Index, lines []Datum, manualCompaction bool) error {
 	if err := idx.Batch(batch); err != nil {
 		return err
 	}
-	batch.Close()
+	batch.Reset()
 
 	if manualCompaction {
 		_, kv, err := idx.Advanced()
