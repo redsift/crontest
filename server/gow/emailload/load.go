@@ -25,7 +25,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 		return nil, fmt.Errorf("empty input")
 	}
 
-	idx, err := utils.OpenIndex("forensics", false, isMM)
+	idx, err := utils.OpenIndex("forensics", false)
 	if err != nil {
 		return nil, fmt.Errorf("error creating index: %s", err.Error())
 	}
