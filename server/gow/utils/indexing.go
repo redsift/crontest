@@ -214,6 +214,7 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 	start := time.Now()
 
 	batch := idx.NewBatch()
+	counter := 0
 	for _, s := range lines {
 		if err := batch.Index(strings.TrimSpace(s.Id), s.Data); err != nil {
 			return err
@@ -223,7 +224,8 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 			if err := idx.Batch(batch); err != nil {
 				return err
 			}
-			fmt.Println("committed batch...")
+			counter = counter + batch.Size()
+			fmt.Printf("committed batch... %d\n", counter)
 			batch.Reset()
 		}
 	}
