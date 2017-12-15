@@ -223,6 +223,7 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 			if err := idx.Batch(batch); err != nil {
 				return err
 			}
+			fmt.Println("committed batch...")
 			batch.Reset()
 		}
 	}
@@ -247,7 +248,11 @@ func Compact(idx bleve.Index) error {
 		if isDebug {
 			fmt.Printf("Compacting....\n")
 		}
+		start := time.Now()
 		kvstore.Compact()
+		if isDebug {
+				fmt.Printf("compacting took %0.3fs\n" time.Now().Sub(start).Seconds())
+		}
 	}
 	return nil
 }
