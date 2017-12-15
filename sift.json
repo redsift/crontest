@@ -113,7 +113,7 @@
       {
         "#": "Update Forensics Index",
         "input": {
-          "bucket": "forensics-st",
+          "bucket": "dump-st",
           "select": "*/*"
         },
         "implementation": {
