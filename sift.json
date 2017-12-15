@@ -38,7 +38,12 @@
         "#": "Migration Reindex Forensics",
         "input":{
           "bucket": "dump-st",
-          "select": "*/*"
+          "select": "*/*",
+          "get": [
+            {
+              "bucket": "session",
+              "key": "input/cron"
+            }]
         },
         "implementation": {
           "go": "server/gow/emailload/load.go",
@@ -109,8 +114,7 @@
         "#": "Update Forensics Index",
         "input": {
           "bucket": "forensics-st",
-          "select": "*/*",
-          "batchSize":1000
+          "select": "*/*"
         },
         "implementation": {
           "go": "server/gow/emailload/load.go",

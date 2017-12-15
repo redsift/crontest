@@ -3,7 +3,6 @@ package emailload
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"server/gow/utils"
 
 	"github.com/redsift/go-sandbox-rpc"
@@ -11,26 +10,26 @@ import (
 
 // Indexing the following fields: from, to, subject, headers.authentication-results
 func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error) {
-	mm := os.Getenv("MIGRATION_MODE")
-	isMM := mm == "true"
-	indexPath := os.Getenv("_LARGE_STORAGE_rocksdb_store_forensics")
-	if len(indexPath) == 0 && isMM {
-		fmt.Println("no op")
-		return nil, nil
-	}
+	isMM := false
 	inData := req.In.Data
 	if len(inData) == 0 {
 		return nil, fmt.Errorf("empty input")
 	}
 
-	idx, err := utils.OpenIndex("forensics", false)
+	inGet := req.Get
+	if len(inGet) > 0 {
+		if err := json.Unmarshal(inGet.Data[0].Data.Value, &isMM); err != nil {
+			return nil, fmt.Errorf("unmarshal input/cron from session: %s", err.Error())
+		}
+		if isMM {
+			fmt.Println("Migration mode enabled!")
+		}
+	}
+
+	idx, err := utils.OpenIndex("forensics", false, isMM)
 	if err != nil {
 		return nil, fmt.Errorf("error creating index: %s", err.Error())
 	}
-	if idx == nil {
-		return nil, fmt.Errorf("error creating index, retries failed")
-	}
-
 	defer idx.Close()
 
 	var datums []utils.Datum
@@ -75,7 +74,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 
 	if isMM {
 		err = utils.Compact(idx)
-		if err != nil{
+		if err != nil {
 			return nil, fmt.Errorf("error in advanced: %s", err.Error())
 		}
 	}
