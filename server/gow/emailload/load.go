@@ -18,9 +18,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 
 	inGet := req.Get
 	if len(inGet) > 0 {
-		if err := json.Unmarshal(inGet.Data[0].Data.Value, &isMM); err != nil {
-			return nil, fmt.Errorf("unmarshal input/cron from session: %s", err.Error())
-		}
+		isMM = string(inGet[0].Data[0].Value[:]) == "true"
 		if isMM {
 			fmt.Println("Migration mode enabled!")
 		}
