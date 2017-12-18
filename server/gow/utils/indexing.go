@@ -46,7 +46,6 @@ func OpenIndex(name string, forSearch, migrationMode bool) (bleve.Index, error) 
 		}
 	} else {
 		cfg["writeoptions_disable_WAL"] = migrationMode
-		cfg["prepare_for_bulk_load"] = migrationMode
 		idx, err = openToWriteOrCreate(name, indexPath, cfg)
 		if err != nil {
 			if isDebug {
