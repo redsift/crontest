@@ -45,6 +45,7 @@ func OpenIndex(name string, forSearch bool) (bleve.Index, error) {
 			return nil, err
 		}
 	} else {
+		cfg["writeoptions_disable_WAL"] = true
 		idx, err = openToWriteOrCreate(name, indexPath, cfg)
 		if err != nil {
 			if isDebug {

@@ -65,7 +65,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 		})
 	}
 
-	err = utils.UpdateIndex(idx, 1000, datums)
+	err = utils.UpdateIndex(idx, 100, datums)
 	if err != nil {
 		return nil, fmt.Errorf("error updating index: %s", err.Error())
 	}
