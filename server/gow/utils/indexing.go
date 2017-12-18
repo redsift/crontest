@@ -232,7 +232,7 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 	if err := idx.Batch(batch); err != nil {
 		return err
 	}
-	batch.Reset()  
+	batch.Reset()
 
 	fmt.Printf("Indexed %d lines in %0.3fs\n", len(lines), time.Now().Sub(start).Seconds())
 	return nil
