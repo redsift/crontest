@@ -24,7 +24,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 		}
 	}
 
-	idx, err := utils.OpenIndex("forensics", false, isMM)
+	idx, err := utils.OpenIndex("forensics", false)
 	if err != nil {
 		return nil, fmt.Errorf("error creating index: %s", err.Error())
 	}
@@ -70,12 +70,12 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 		return nil, fmt.Errorf("error updating index: %s", err.Error())
 	}
 
-	if isMM {
-		err = utils.Compact(idx)
-		if err != nil {
-			return nil, fmt.Errorf("error in advanced: %s", err.Error())
-		}
-	}
+	// if isMM {
+	// 	err = utils.Compact(idx)
+	// 	if err != nil {
+	// 		return nil, fmt.Errorf("error in advanced: %s", err.Error())
+	// 	}
+	// }
 
 	return nil, nil
 }

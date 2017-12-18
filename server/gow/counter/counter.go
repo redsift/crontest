@@ -8,7 +8,7 @@ import (
 )
 
 func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error) {
-  idx, err := utils.OpenIndex("forensics", true, false)
+  idx, err := utils.OpenIndex("forensics", true)
   if err != nil {
     return nil, fmt.Errorf("error opening index: %s", err.Error())
   }
