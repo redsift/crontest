@@ -253,7 +253,7 @@ func Compact(idx bleve.Index) error {
 		start := time.Now()
 		kvstore.Compact()
 		if isDebug {
-				fmt.Printf("compacting took %0.3fs\n" time.Now().Sub(start).Seconds())
+				fmt.Printf("compacting took %0.3fs\n", time.Now().Sub(start).Seconds())
 		}
 	}
 	return nil
