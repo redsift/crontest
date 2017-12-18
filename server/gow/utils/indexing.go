@@ -20,7 +20,7 @@ type Datum struct {
 	Data map[string]interface{} `json:"data"`
 }
 
-func OpenIndex(name string, forSearch, migrationMode bool) (bleve.Index, error) {
+func OpenIndex(name string, forSearch bool) (bleve.Index, error) {
 	indexPath := os.Getenv("_LARGE_STORAGE_rocksdb_store_" + name)
 	if len(indexPath) == 0 {
 		return nil, errors.New("node has no large storage with name: " + name)
@@ -45,8 +45,6 @@ func OpenIndex(name string, forSearch, migrationMode bool) (bleve.Index, error) 
 			return nil, err
 		}
 	} else {
-		cfg["writeoptions_disable_WAL"] = migrationMode
-		cfg["prepare_for_bulk_load"] = migrationMode
 		idx, err = openToWriteOrCreate(name, indexPath, cfg)
 		if err != nil {
 			if isDebug {
