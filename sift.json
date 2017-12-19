@@ -38,16 +38,9 @@
         "#": "Migration Reindex Forensics",
         "input":{
           "bucket": "forensics-st",
-          "select": "*/*",
-          "get": [
-            {
-              "bucket": "session",
-              "key": "input/cron"
-            }]
+          "select": "*/*"
         },
         "implementation": {
-          "go": "server/gow/emailload/load.go",
-          "sandbox": "quay.io/redsift/sandbox-go-rocksdb:v5.8",
           "when": {
             "run": {
               "update": true,
@@ -55,11 +48,11 @@
             }
           },
           "qos": {
-            "large-storage": [
-              "rocksdb_store_forensics:rw"
-            ],
             "long": true
           }
+        },
+         "outputs":{
+          "forensics-st":{ "discardValue": true}
         }
       },
       {
@@ -114,11 +107,17 @@
         "#": "Update Forensics Index",
         "input": {
           "bucket": "forensics-st",
-          "select": "*/*"
+          "select": "*/*",
+          "batchSize": 1000
         },
         "implementation": {
           "go": "server/gow/emailload/load.go",
-          "sandbox": "quay.io/redsift/sandbox-go-rocksdb:v5.8"
+          "sandbox": "quay.io/redsift/sandbox-go-rocksdb:v5.8",
+          "qos": {
+            "large-storage": [
+              "rocksdb_store_forensics:rw"
+            ]
+          }
         }
       },
       {
