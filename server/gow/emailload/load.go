@@ -20,7 +20,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 	if len(inGet) > 0 {
 		isMM = string(inGet[0].Data[0].Value[:]) == "true"
 		if isMM {
-			fmt.Println("Migration mode enabled!")
+			fmt.Println("Migration mode enabled!!!")
 		}
 	}
 
