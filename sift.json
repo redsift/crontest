@@ -37,7 +37,7 @@
       {
         "#": "Migration Reindex Forensics",
         "input":{
-          "bucket": "forensics-st",
+          "bucket": "dump-st",
           "select": "*/*",
           "get": [
             {
