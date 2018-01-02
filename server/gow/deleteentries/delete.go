@@ -26,9 +26,8 @@ func Compute(got sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 	htmlQuery := u.Query()
 
 	bq := utils.BeforeLastTwoWeeksDateQuery("date")
-	if numericTest {
-		bq = utils.BeforeLastTwoWeeksNumberQuery("date")
-	}
+	// bq := utils.BeforeLastTwoWeeksNumericQuery("date")
+
 	searchRequest := bleve.NewSearchRequest(bq)
 	searchRequest.Fields = []string{"*"}
 	searchRequest.Size = 10000

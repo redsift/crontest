@@ -245,10 +245,7 @@ func DeleteFromIndex(idx bleve.Index, batchSize int, lines []string) error {
 	batch := idx.NewBatch()
 	counter := 0
 	for _, s := range lines {
-		if err := batch.Delete(s); err != nil {
-			return err
-		}
-
+		batch.Delete(s)
 		if batch.Size() == batchSize {
 			if err := idx.Batch(batch); err != nil {
 				return err

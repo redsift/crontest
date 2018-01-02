@@ -99,10 +99,10 @@ func BeforeLastTwoWeeksDateQuery(fieldName string) query.Query {
 	return query
 }
 
-func BeforeLastTwoWeeksNumberQuery(fieldName string) query.Query {
-	aYearBeforeNow := time.Now().AddDate(-1, 0, 0).Seconds()
-	twoWeeksBeforeNow := time.Now().AddDate(0, 0, -14).Seconds()
-	query := bleve.NewDateRangeQuery(aYearBeforeNow, twoWeeksBeforeNow)
+func BeforeLastTwoWeeksNumericQuery(fieldName string) query.Query {
+	aYearBeforeNow := time.Now().AddDate(-1, 0, 0)
+	twoWeeksBeforeNow := time.Now().AddDate(0, 0, -14)
+	query := bleve.NewNumericRangeQuery(aYearBeforeNow.Seconds(), twoWeeksBeforeNow.Seconds())
 	query.SetField(fieldName)
 
 	return query
