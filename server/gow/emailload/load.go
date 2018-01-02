@@ -28,10 +28,6 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 	if err != nil {
 		return nil, fmt.Errorf("error creating index: %s", err.Error())
 	}
-	if idx == nil {
-		return nil, fmt.Errorf("error creating index, retries failed")
-	}
-
 	defer idx.Close()
 
 	var datums []utils.Datum
@@ -71,7 +67,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 
 	err = utils.UpdateIndex(idx, 200, datums)
 	if err != nil {
-		return nil, fmt.Errorf("error updating index: %s", err.Error())
+		return nil, fmt.Errorf("error updating forensics index: %s", err.Error())
 	}
 
 	return nil, nil
