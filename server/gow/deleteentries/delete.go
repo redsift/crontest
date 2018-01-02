@@ -11,7 +11,6 @@ import (
 )
 
 func Compute(got sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error) {
-	var resp []sandboxrpc.ComputeResponse
 	ll := os.Getenv("LOGLEVEL")
 	isDebug := ll == "debug"
 
