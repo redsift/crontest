@@ -23,8 +23,6 @@ func Compute(got sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 	}
 	defer idx.Close()
 
-	htmlQuery := u.Query()
-
 	bq := utils.BeforeLastTwoWeeksDateQuery("date")
 	// bq := utils.BeforeLastTwoWeeksNumericQuery("date")
 
