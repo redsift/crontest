@@ -119,6 +119,11 @@
         "implementation": {
           "go": "server/gow/emailload/load.go",
           "sandbox": "quay.io/redsift/sandbox-go-rocksdb:v5.8"
+          "qos": {
+            "large-storage": [
+              "rocksdb_store_forensics:rw"
+            ]
+          }
         }
       },
       {
