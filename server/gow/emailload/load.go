@@ -10,12 +10,21 @@ import (
 
 // Indexing the following fields: from, to, subject, headers.authentication-results
 func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error) {
+	isMM := false
 	inData := req.In.Data
 	if len(inData) == 0 {
 		return nil, fmt.Errorf("empty input")
 	}
 
-	idx, err := utils.OpenIndex("forensics", false)
+	inGet := req.Get
+	if len(inGet) > 0 {
+		isMM = string(inGet[0].Data[0].Value[:]) == "true"
+		if isMM {
+			fmt.Println("Migration mode enabled!!!")
+		}
+	}
+
+	idx, err := utils.OpenIndex("forensics", false, isMM)
 	if err != nil {
 		return nil, fmt.Errorf("error creating index: %s", err.Error())
 	}
@@ -25,7 +34,6 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 
 	defer idx.Close()
 
-	batch := 1000
 	var datums []utils.Datum
 	for _, v := range inData {
 		if v.Data.Value == nil {
@@ -61,7 +69,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 		})
 	}
 
-	err = utils.UpdateIndex(idx, batch, datums)
+	err = utils.UpdateIndex(idx, 200, datums)
 	if err != nil {
 		return nil, fmt.Errorf("error updating index: %s", err.Error())
 	}

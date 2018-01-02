@@ -13,13 +13,91 @@
   "dag": {
     "inputs": {
       "rpc": {
-        "trigger":{
-          "methods":["GET"],
-          "path":"/trigger"
+        "trigger": {
+          "methods": [
+            "GET"
+          ],
+          "path": "/trigger"
+        },
+        "count": {
+          "methods": [
+            "GET"
+          ],
+          "path": "/count"
+        },
+        "countstore": {
+          "methods": [
+            "GET"
+          ],
+          "path": "/countstore"
         }
       }
     },
     "nodes": [
+      {
+        "#": "Migration Reindex Forensics",
+        "input":{
+          "bucket": "dump-st",
+          "select": "*/*",
+          "get": [
+            {
+              "bucket": "session",
+              "key": "input/cron"
+            }]
+        },
+        "implementation": {
+          "go": "server/gow/emailload/load.go",
+          "sandbox": "quay.io/redsift/sandbox-go-rocksdb:v5.8",
+          "when": {
+            "run": {
+              "update": true,
+              "install": false
+            }
+          },
+          "qos": {
+            "large-storage": [
+              "rocksdb_store_forensics:rw"
+            ],
+            "long": true
+          }
+        }
+      },
+      {
+        "#": "RPC trigger",
+        "input": {
+          "bucket": "trigger"
+        },
+        "implementation": {
+          "javascript": "server/rpc.js"
+        },
+        "outputs": {
+          "trigger-st": {},
+          "api_rpc": {}
+        }
+      },
+      {
+        "#": "Count docs",
+        "input": {
+          "bucket": "count",
+          "get": [
+            {
+              "bucket": "session",
+              "key": "rpc/uuid"
+            }]
+        },
+        "implementation": {
+          "go": "server/gow/counter/counter.go",
+          "sandbox": "quay.io/redsift/sandbox-go-rocksdb:v5.8",
+          "qos": {
+            "large-storage": [
+              "rocksdb_store_forensics:rw"
+            ]
+          }
+        },
+        "outputs": {
+          "api_rpc": {}
+        }
+      },
       {
         "#": "Emit Node",
         "input": {
@@ -29,63 +107,72 @@
           "javascript": "server/node1.js"
         },
         "outputs": {
-          "forensics-st":{}
+          "forensics-st": {}
         }
       },
       {
         "#": "Update Forensics Index",
         "input": {
           "bucket": "forensics-st",
-          "select": "/"
+          "select": "*/*"
         },
         "implementation": {
           "go": "server/gow/emailload/load.go",
-          "sandbox": "quay.io/redsift/sandbox-go-rocksdb:v5.8",
-          "qos": {
-            "large-storage": [
-              "rocksdb_store_forensics:rw"
-            ]
-          }
+          "sandbox": "quay.io/redsift/sandbox-go-rocksdb:v5.8"
         }
       },
       {
-        "#": "RPC trigger",
-        "input":{
-          "bucket": "trigger"
+        "#": "Store counter emit */*",
+        "input": {
+          "bucket": "countstore"
         },
         "implementation": {
-          "javascript": "server/rpc.js"
+          "javascript": "server/staremiter.js"
         },
-        "outputs":{
-          "trigger-st": {},
-          "api_rpc": {}
+        "outputs": {
+          "forensics-counter-st": {"discardValue": true}
         }
       },
-      {
-        "#": "Cron trigger",
-        "implementation":{
-          "javascript": "server/cron.js",
-          "when":{
-            "interval": 180
-          }
+       {
+        "#": "Respond to countsize",
+        "input": {
+          "bucket": "forensics-counter-st",
+          "select": "~/~",
+          "computeOnEmptySelect": true,
+          "get": [
+            {
+              "bucket": "session",
+              "key": "rpc/uuid"
+            }
+          ]
         },
-        "outputs":{
-          "trigger-st": {}
+        "implementation": {
+          "javascript": "server/count_response.js"
+        },
+        "outputs": {
+          "api_rpc": {}
         }
       }
     ],
     "stores": {
-      "forensics-st": {
+      "dump-st":{
         "key$schema": "string/string"
+      },
+      "session": {
+        "import": "_session"
+      },
+      "forensics-st": {
+        "key$schema": "string/string",
+        "alias":["forensics-counter-st"]
       },
       "trigger-st": {
         "key$schema": "string"
       }
     },
     "outputs": {
-      "exports":{
-        "api_rpc":{
-          "import":"_rpc"
+      "exports": {
+        "api_rpc": {
+          "import": "_rpc"
         }
       }
     }

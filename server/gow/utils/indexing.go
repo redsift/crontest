@@ -20,7 +20,7 @@ type Datum struct {
 	Data map[string]interface{} `json:"data"`
 }
 
-func OpenIndex(name string, forSearch bool) (bleve.Index, error) {
+func OpenIndex(name string, forSearch, migrationMode bool) (bleve.Index, error) {
 	indexPath := os.Getenv("_LARGE_STORAGE_rocksdb_store_" + name)
 	if len(indexPath) == 0 {
 		return nil, errors.New("node has no large storage with name: " + name)
@@ -30,10 +30,12 @@ func OpenIndex(name string, forSearch bool) (bleve.Index, error) {
 
 	var idx bleve.Index
 	var err error
+	cfg := map[string]interface{}{
+		"keep_log_file_num":     100, // (default: 1000)
+		"log_file_time_to_roll": 300, // in seconds (default: 0)
+	}
 	if forSearch {
-		cfg := map[string]interface{}{
-			"read_only": true,
-		}
+		cfg["read_only"] = true
 		start := time.Now()
 		idx, err = bleve.OpenUsing(indexPath, cfg)
 		if isDebug {
@@ -43,7 +45,8 @@ func OpenIndex(name string, forSearch bool) (bleve.Index, error) {
 			return nil, err
 		}
 	} else {
-		idx, err = openToWriteOrCreate(name, indexPath)
+		cfg["writeoptions_disable_WAL"] = migrationMode
+		idx, err = openToWriteOrCreate(name, indexPath, cfg)
 		if err != nil {
 			if isDebug {
 				fmt.Println("openToWriteOrCreate failed because", err.Error())
@@ -62,7 +65,7 @@ func OpenIndex(name string, forSearch bool) (bleve.Index, error) {
 					if d >= b.Max {
 						break
 					}
-					idx, err = openToWriteOrCreate(name, indexPath)
+					idx, err = openToWriteOrCreate(name, indexPath, cfg)
 					if idx != nil {
 						break
 					}
@@ -80,19 +83,14 @@ func OpenIndex(name string, forSearch bool) (bleve.Index, error) {
 	return idx, nil
 }
 
-func openToWriteOrCreate(name, indexPath string) (bleve.Index, error) {
-	ll := os.Getenv("LOGLEVEL")
-	isDebug := ll == "debug"
-	if isDebug {
-		fmt.Println("openToWriteOrCreate...")
-	}
+func openToWriteOrCreate(name, indexPath string, cfg map[string]interface{}) (bleve.Index, error) {
 	start := time.Now()
-	idx, err := bleve.Open(indexPath)
+	idx, err := bleve.OpenUsing(indexPath, cfg)
 	if err != nil {
 		if err != bleve.ErrorIndexMetaMissing {
 			return nil, err
 		}
-		idx, err = createIndex(name, indexPath)
+		idx, err = createIndex(name, indexPath, cfg)
 		if err != nil {
 			return nil, err
 		}
@@ -102,7 +100,7 @@ func openToWriteOrCreate(name, indexPath string) (bleve.Index, error) {
 	return idx, nil
 }
 
-func createIndex(name, indexPath string) (bleve.Index, error) {
+func createIndex(name, indexPath string, cfg map[string]interface{}) (bleve.Index, error) {
 	fmt.Println("Creating new index!")
 
 	stdJustIndexed := bleve.NewTextFieldMapping()
@@ -204,7 +202,7 @@ func createIndex(name, indexPath string) (bleve.Index, error) {
 	mapping := bleve.NewIndexMapping()
 	mapping.DefaultMapping = lineMapping
 	mapping.DefaultAnalyzer = "standard"
-	idx, err := bleve.NewUsing(indexPath, mapping, upsidedown.Name, rocksdb.Name, nil)
+	idx, err := bleve.NewUsing(indexPath, mapping, upsidedown.Name, rocksdb.Name, cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -213,12 +211,11 @@ func createIndex(name, indexPath string) (bleve.Index, error) {
 }
 
 func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
-	ll := os.Getenv("LOGLEVEL")
-	isDebug := ll == "debug"
 	start := time.Now()
 
 	batch := idx.NewBatch()
-	for i, s := range lines {
+	counter := 0
+	for _, s := range lines {
 		if err := batch.Index(strings.TrimSpace(s.Id), s.Data); err != nil {
 			return err
 		}
@@ -227,13 +224,9 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 			if err := idx.Batch(batch); err != nil {
 				return err
 			}
+			counter = counter + batch.Size()
+			fmt.Printf("committed batch... %d\n", counter)
 			batch.Reset()
-		}
-
-		if isDebug {
-			if i%100 == 0 {
-				fmt.Println("Indexed...", i)
-			}
 		}
 	}
 
@@ -243,5 +236,25 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 	batch.Reset()
 
 	fmt.Printf("Indexed %d lines in %0.3fs\n", len(lines), time.Now().Sub(start).Seconds())
+	return nil
+}
+
+func Compact(idx bleve.Index) error {
+	ll := os.Getenv("LOGLEVEL")
+	isDebug := ll == "debug"
+	_, kv, err := idx.Advanced()
+	if err != nil {
+		return err
+	}
+	if kvstore, ok := kv.(*rocksdb.Store); ok {
+		if isDebug {
+			fmt.Printf("Compacting....\n")
+		}
+		start := time.Now()
+		kvstore.Compact()
+		if isDebug {
+				fmt.Printf("compacting took %0.3fs\n", time.Now().Sub(start).Seconds())
+		}
+	}
 	return nil
 }
