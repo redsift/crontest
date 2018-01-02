@@ -76,3 +76,19 @@ func ParseAuthenticationResults(ar string) map[string]string {
 
 	return res
 }
+
+func GetHitID(fields map[string]interface{}, id, indexName, domain string) string {
+	hid := id
+	if indexName == "records" {
+		t, ok := fields["key"].(string)
+		if !ok {
+			return ""
+		}
+		hid = t
+	}
+
+	if len(domain) > 0 && !strings.HasPrefix(hid, domain) {
+		return ""
+	}
+	return hid
+}

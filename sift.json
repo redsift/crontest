@@ -133,7 +133,7 @@
           "forensics-counter-st": {"discardValue": true}
         }
       },
-       {
+      {
         "#": "Respond to countsize",
         "input": {
           "bucket": "forensics-counter-st",
@@ -151,6 +151,32 @@
         },
         "outputs": {
           "api_rpc": {}
+        }
+      },
+      {
+        "#": "Delete Forensics older than 2 weeks",
+        "input":{
+          "get": [
+            {
+              "bucket": "session",
+              "key": "input/cron"
+            }]
+        },
+        "implementation": {
+          "go": "server/gow/deleteentries/delete.go",
+          "sandbox": "quay.io/redsift/sandbox-go-rocksdb:v5.8",
+          "when": {
+            "run": {
+              "update": true,
+              "install": false
+            }
+          },
+          "qos": {
+            "large-storage": [
+              "rocksdb_store_forensics:rw"
+            ],
+            "long": true
+          }
         }
       }
     ],

@@ -239,6 +239,35 @@ func UpdateIndex(idx bleve.Index, batchSize int, lines []Datum) error {
 	return nil
 }
 
+func DeleteFromIndex(idx bleve.Index, batchSize int, lines []string) error {
+	start := time.Now()
+
+	batch := idx.NewBatch()
+	counter := 0
+	for _, s := range lines {
+		if err := batch.Delete(s); err != nil {
+			return err
+		}
+
+		if batch.Size() == batchSize {
+			if err := idx.Batch(batch); err != nil {
+				return err
+			}
+			counter = counter + batch.Size()
+			fmt.Printf("committed batch... %d\n", counter)
+			batch.Reset()
+		}
+	}
+
+	if err := idx.Batch(batch); err != nil {
+		return err
+	}
+	batch.Reset()
+
+	fmt.Printf("Deleted %d lines in %0.3fs\n", len(lines), time.Now().Sub(start).Seconds())
+	return nil
+}
+
 func Compact(idx bleve.Index) error {
 	ll := os.Getenv("LOGLEVEL")
 	isDebug := ll == "debug"
@@ -253,7 +282,7 @@ func Compact(idx bleve.Index) error {
 		start := time.Now()
 		kvstore.Compact()
 		if isDebug {
-				fmt.Printf("compacting took %0.3fs\n", time.Now().Sub(start).Seconds())
+			fmt.Printf("compacting took %0.3fs\n", time.Now().Sub(start).Seconds())
 		}
 	}
 	return nil

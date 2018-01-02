@@ -2,6 +2,7 @@ package utils
 
 import (
 	"strings"
+	"time"
 
 	"github.com/redsift/bleve"
 	"github.com/redsift/bleve/search/query"
@@ -76,4 +77,33 @@ func ParseSearchQuery(hQ string) query.Query {
 	}
 	return boolq
 
+}
+
+func OnlyIdsFromSearchResults(sr *bleve.SearchResult, indexName, domain string) []string {
+	hl := []string{}
+	for _, hit := range sr.Hits {
+		rid := GetHitID(hit.Fields, hit.ID, indexName, domain)
+		if len(rid) > 0 {
+			hl = append(hl, rid)
+		}
+	}
+	return hl
+}
+
+func BeforeLastTwoWeeksDateQuery(fieldName string) query.Query {
+	aYearBeforeNow := time.Now().AddDate(-1, 0, 0)
+	twoWeeksBeforeNow := time.Now().AddDate(0, 0, -14)
+	query := bleve.NewDateRangeQuery(aYearBeforeNow, twoWeeksBeforeNow)
+	query.SetField(fieldName)
+
+	return query
+}
+
+func BeforeLastTwoWeeksNumberQuery(fieldName string) query.Query {
+	aYearBeforeNow := time.Now().AddDate(-1, 0, 0).Seconds()
+	twoWeeksBeforeNow := time.Now().AddDate(0, 0, -14).Seconds()
+	query := bleve.NewDateRangeQuery(aYearBeforeNow, twoWeeksBeforeNow)
+	query.SetField(fieldName)
+
+	return query
 }
