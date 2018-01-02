@@ -22,7 +22,7 @@ func Compute(req sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
   txt := fmt.Sprintf("The DB contains %d documents", count)
   fmt.Println(txt)
 
-  utils.Compact(idx)
+  // utils.Compact(idx)
   getData := req.Get
   reqID := string(getData[0].Data[0].Value[:])
 
