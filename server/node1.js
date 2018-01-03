@@ -16,7 +16,7 @@ var crypto = require("crypto");
 var moment = require("moment");
 
 function randomDate(start, end) {
-    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  return moment(start.valueOf() + Math.random() * (end.valueOf() - start.valueOf()));
 }
 
 module.exports = function (got) {
@@ -24,7 +24,7 @@ module.exports = function (got) {
   var numForensics = parseInt(process.env.NUM_OF_STUBS) || 100
   var res = [];
   for (var i = 0; i < numForensics; i++) {
-    var date = moment(randomDate(new Date(2017, 12, 16), new Date(2017, 12, 21))).toISOString()
+    var date = randomDate(moment().subtract(16, 'days'), moment().subtract(12, 'days')).toISOString()
     console.log('the generated date is', date)
     res.push({
       name: 'forensics-st',

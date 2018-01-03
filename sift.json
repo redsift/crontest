@@ -118,7 +118,7 @@
         },
         "implementation": {
           "go": "server/gow/emailload/load.go",
-          "sandbox": "quay.io/redsift/sandbox-go-rocksdb:v5.8"
+          "sandbox": "quay.io/redsift/sandbox-go-rocksdb:v5.8",
           "qos": {
             "large-storage": [
               "rocksdb_store_forensics:rw"
@@ -160,13 +160,6 @@
       },
       {
         "#": "Delete Forensics older than 2 weeks",
-        "input":{
-          "get": [
-            {
-              "bucket": "session",
-              "key": "input/cron"
-            }]
-        },
         "implementation": {
           "go": "server/gow/deleteentries/delete.go",
           "sandbox": "quay.io/redsift/sandbox-go-rocksdb:v5.8",
