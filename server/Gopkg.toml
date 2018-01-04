@@ -6,6 +6,11 @@
 [[constraint]]
   branch = "patched"
   name = "github.com/redsift/blevex"
+
 [[constraint]]
   branch = "master"
   name = "github.com/jpillora/backoff"
+
+[[constraint]]
+  branch = "patched"
+  name = "github.com/redsift/gorocksdb"

@@ -25,7 +25,6 @@ module.exports = function (got) {
   var res = [];
   for (var i = 0; i < numForensics; i++) {
     var date = randomDate(moment().subtract(16, 'days'), moment().subtract(12, 'days')).toISOString()
-    console.log('the generated date is', date)
     res.push({
       name: 'forensics-st',
       key: `redsift.com/${id}-${i}`,
