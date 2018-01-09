@@ -41,7 +41,7 @@
   branch = "patched"
   name = "github.com/redsift/blevex"
   packages = ["rocksdb"]
-  revision = "5b622fc4b7edb86e60e3e24877e0597f866b85dd"
+  revision = "6027903768e6eee5e4cbd39e8177777d9c850467"
 
 [[projects]]
   branch = "master"

@@ -31,7 +31,7 @@ func OpenIndex(name string, forSearch, migrationMode bool) (bleve.Index, error) 
 	var idx bleve.Index
 	var err error
 	cfg := map[string]interface{}{
-		"keep_log_file_num":     1.0, // (default: 1000)
+		"keep_log_file_num":     1, // (default: 1000)
 	}
 	if forSearch {
 		cfg["read_only"] = true
