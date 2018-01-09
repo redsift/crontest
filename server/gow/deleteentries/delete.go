@@ -22,7 +22,7 @@ func Compute(got sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 	}
 	defer idx.Close()
 
-	bq := utils.BeforeLastTwoWeeksDateQuery("date")
+	bq := utils.BeforeLastXDaysDateQuery("date", 30)
 
 	searchRequest := bleve.NewSearchRequest(bq)
 	searchRequest.Fields = []string{"*"}

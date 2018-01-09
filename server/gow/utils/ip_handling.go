@@ -90,9 +90,9 @@ func OnlyIdsFromSearchResults(sr *bleve.SearchResult, indexName, domain string) 
 	return hl
 }
 
-func BeforeLastTwoWeeksDateQuery(fieldName string) query.Query {
+func BeforeLastXDaysDateQuery(fieldName string, lastDaysToKeep int) query.Query {
 	aYearBeforeNow := time.Now().AddDate(-1, 0, 0)
-	twoWeeksBeforeNow := time.Now().AddDate(0, 0, -14)
+	twoWeeksBeforeNow := time.Now().AddDate(0, 0, -lastDaysToKeep)
 	query := bleve.NewDateRangeQuery(aYearBeforeNow, twoWeeksBeforeNow)
 	query.SetField(fieldName)
 

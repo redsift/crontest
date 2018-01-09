@@ -53,7 +53,7 @@
   branch = "patched"
   name = "github.com/redsift/gorocksdb"
   packages = ["."]
-  revision = "e5e04375dda2aedea8bd12d66f8d4f39cdd4ca84"
+  revision = "d1d69065a9b96ad8c55b08025857dc4688fc450b"
 
 [[projects]]
   branch = "master"
@@ -65,13 +65,13 @@
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context"]
-  revision = "d866cfc389cec985d6fda2859936a575a55a3ab6"
+  revision = "434ec0c7fe3742c984919a691b2018a6e9694425"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "a3f2cbd54cf5dfe3fbaccf76375fdb12f67654c8"
+  revision = "d38bf781f16e180a1b2ad82697d2f81d7b7ecfac"
 
 [solve-meta]
   analyzer-name = "dep"
