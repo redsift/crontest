@@ -31,8 +31,7 @@ func OpenIndex(name string, forSearch, migrationMode bool) (bleve.Index, error) 
 	var idx bleve.Index
 	var err error
 	cfg := map[string]interface{}{
-		"keep_log_file_num":     100, // (default: 1000)
-		"log_file_time_to_roll": 300, // in seconds (default: 0)
+		"keep_log_file_num":     1.0, // (default: 1000)
 	}
 	if forSearch {
 		cfg["read_only"] = true
@@ -45,7 +44,6 @@ func OpenIndex(name string, forSearch, migrationMode bool) (bleve.Index, error) 
 			return nil, err
 		}
 	} else {
-		cfg["writeoptions_disable_WAL"] = migrationMode
 		idx, err = openToWriteOrCreate(name, indexPath, cfg)
 		if err != nil {
 			if isDebug {
