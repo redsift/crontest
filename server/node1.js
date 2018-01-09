@@ -19,12 +19,13 @@ function randomDate(start, end) {
   return moment(start.valueOf() + Math.random() * (end.valueOf() - start.valueOf()));
 }
 
-module.exports = function (got) {
+module.exports = function(got) {
   var id = crypto.randomBytes(10).toString('hex');
   var numForensics = parseInt(process.env.NUM_OF_STUBS) || 100
   var res = [];
   for (var i = 0; i < numForensics; i++) {
-    var date = randomDate(moment().subtract(16, 'days'), moment().subtract(12, 'days')).toISOString()
+    var NUM_OF_DATES_TO_KEEP = 14
+    var date = randomDate(moment().subtract(NUM_OF_DATES_TO_KEEP + 2, 'days'), moment().subtract(NUM_OF_DATES_TO_KEEP - 2, 'days')).toISOString()
     res.push({
       name: 'forensics-st',
       key: `redsift.com/${id}-${i}`,
