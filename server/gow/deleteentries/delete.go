@@ -39,10 +39,10 @@ func Compute(got sandboxrpc.ComputeRequest) ([]sandboxrpc.ComputeResponse, error
 
 	rids := utils.OnlyIdsFromSearchResults(searchResult, indexName, "")
 	fmt.Println("onlyids", len(rids))
-	// err = utils.DeleteFromIndex(idx, 200, rids)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("error while deleting: %s", err.Error())
-	// }
+	err = utils.DeleteFromIndex(idx, 200, rids)
+	if err != nil {
+		return nil, fmt.Errorf("error while deleting: %s", err.Error())
+	}
 
 	return nil, nil
 }
