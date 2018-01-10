@@ -87,7 +87,7 @@ func GetHitID(fields map[string]interface{}, id, indexName, domain string) strin
 		hid = t
 	}
 
-	if len(domain) > 0 && !strings.HasPrefix(hid, domain) {
+	if !strings.HasPrefix(hid, domain) {
 		return ""
 	}
 	return hid
